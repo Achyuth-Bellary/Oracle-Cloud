@@ -1,0 +1,62 @@
+- name: "Mount FSS on DR Nodes"
+  become: Yes
+  hosts: all
+  vars:
+          ansible_user: opc
+          soa_paths:
+                  - /opt/pge/jms/C2M_ESS
+                  - /opt/pge/data/address
+                  - /opt/apps/oracle/middleware/shared_config/patches
+          c2m_paths:
+                  - /opt/pge/data/address
+                  - /opt/apps/ouapps/c2mfvt1
+          directories:
+                  - /opt/apps/ouapps
+                  - /opt/pge/data
+                  - /opt/apps/oracle/middleware/shared_config
+                  - /opt/pge/jms
+  tasks:
+
+                  - debug: msg="play_hosts={{play_hosts}}"
+                    run_once: true
+                  - name: Create mount point directories locally
+                    file:
+                        path: "{{ item }}"
+                        state: directory
+                    with_items: "{{ directories }}"
+                  - name: Mounting ouapps
+                    shell:
+                            sudo mount {{ mount_target }}:/ouapps /opt/apps/ouapps
+                    args:
+                            warn: false
+                    when: "'c2m' in hostvars[thehost]['ansible_hostname']"
+                  - name: Mounting data
+                    shell:
+                            sudo mount {{ mount_target }}:/data /opt/pge/data
+                    args:
+                            warn: false
+                  - name: Mounting soajms
+                    shell:
+                            sudo mount {{ mount_target }}:/soajms /opt/pge/jms
+                    args:
+                            warn: false
+                    when: "'soa' in hostvars[thehost]['ansible_hostname']"
+                  - name: Mounting soajms
+                    shell:
+                            sudo mount {{ mount_target }}:/soa_shared_config /opt/apps/oracle/middleware/shared_config
+                    args:
+                            warn: false
+                    when: "'soa' in hostvars[thehost]['ansible_hostname']"
+
+                  - name: check if soa mount exsists
+                    stat:
+                            path: "{{item }}"
+                    with_items: "{{ soa_paths }}"
+                    when: "'soa' in hostvars[thehost]['ansible_hostname']"
+                    register: soa_path_variable
+                  - name: check if c2m mount exsists
+                    stat:
+                            path: "{{item }}"
+                    with_items: "{{ c2m_paths }}"
+                    when: "'c2m' in hostvars[thehost]['ansible_hostname']"
+                    register: c2m_path_variable

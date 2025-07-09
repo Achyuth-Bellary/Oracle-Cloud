@@ -1,0 +1,10 @@
+schema_version: 20180708
+name: check-lb-health
+version: 0.0.2
+runtime: python
+build_image: fnproject/python:3.11-dev
+run_image: fnproject/python:3.11
+entrypoint: /python/bin/fdk /function/func.py handler
+memory: 128
+config:
+  wlsc_email_notification_topic_id: ocid1.onstopic.oc1.phx.aaaaaaaams3o5atjlwu6xshjaap6difh7njz54dh52gsnw33hkhdkpkfx6za

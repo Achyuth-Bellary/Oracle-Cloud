@@ -1,0 +1,108 @@
+- hosts: "{{ nodes }}"
+  become: Yes
+  tasks:
+          - name: "Patch Enterprise Linux"
+            block:
+                  - debug: msg="play_hosts={{play_hosts}}"
+                    run_once: true
+                  - name: Create mount point
+                    file:
+                        path: /mnt/PGECustomRepos
+                        state: directory
+
+                  - name: "Ensure yum-utils is installed"
+                    yum:
+                            name: "yum-utils"
+                            state: "present"
+                    register: "patch_utils_installed"
+                    retries: "3"
+                    until: "patch_utils_installed is succeeded"
+
+                  - name: "Ensure rpcbind is running as configured."
+                    service:
+                            name: rpcbind
+                            state: started
+                            enabled: yes
+
+                  - name: Creating a file with content
+                    copy:
+                            dest: "/etc/yum.repos.d/pge"
+                            content: |
+                                    [pgerepo]
+                                    name: pgeownrepo
+                                    baseurl=file:///mnt/PGECustomRepos/Oracle_{{ansible_distribution_major_version}}/{{patch_month}}/
+                                    enabled=1
+                                    gpgcheck=0
+
+                  - name: before patch
+                    debug:
+                       msg: "host_name={{hostvars[inventory_hostname].ansible_hostname}}, kernel={{hostvars[inventory_hostname].ansible_kernel}}, patched_time= {{ansible_date_time.date}}"
+                    register: before_patch
+
+                  - name: append
+                    lineinfile:
+                            dest: /tmp/beforepatch.txt
+                            line: "{{ before_patch.msg }}"
+                            insertafter: EOF
+                    delegate_to: localhost
+                  
+                  - name: mount custome repo
+                    shell: 
+                     sudo mount 10.197.137.196:/PGECustomRepos /mnt/PGECustomRepos
+                    args:
+                            warn: false
+
+                  - name: Disable all the repo's
+                    shell: 
+                     sudo yum-config-manager --disable "*" 
+                    args:
+                            warn: false
+                      
+                   - name: "Add repository and enable"
+                    yum_repository:
+                            name: pgeownrepo
+                            description: pge yum repo
+                            baseurl: file:///mnt/PGECustomRepos/Oracle_{{ansible_distribution_major_version}}/{{patch_month}}/
+                            gpgcheck: no
+                            enabled: yes
+
+                  - name: "Update packages with Yum"
+                    yum:
+                            name: "*"
+                            state: "latest"
+                            update_cache: "yes"
+                    register: "patch_results"
+                    retries: "3"
+                    until: "patch_results is succeeded"
+                    when: ansible_distribution_major_version == "7"
+
+                  - name: "Update packages with dnf"
+                    dnf:
+                            name: "*"
+                            state: "latest"
+                            update_cache: "yes"
+                    register: "patch_results"
+                    retries: "3"
+                    until: "patch_results is succeeded"
+                    when: ansible_distribution_major_version == "8"
+
+                  - name: "REBOOT | Reboot triggered"
+                    reboot:
+                            msg: "Reboot initiated by Ansible. Related to Patch Management."
+                            reboot_timeout: 600
+                            test_command: "whoami"
+                            post_reboot_delay: 15
+
+                  - name: "Output collected yum update output"
+                    debug:
+                             var: "patch_results.results"
+                                     
+                  - name: yum-clean-metadata
+                    ansible.builtin.command: yum clean metadata
+                    args:
+                      warn: no
+                  - name: Remove repository (and clean up left-over metadata)
+                    ansible.builtin.yum_repository:
+                      name: pgeownrepo
+                      state: absent
+                    

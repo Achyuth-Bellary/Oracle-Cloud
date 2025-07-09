@@ -1,0 +1,70 @@
+{
+    "dedupeKey": "0d4718f2-be13-4b56-8460-d8e7b606ff3d",
+    "title": "Scale-out on high CPU for WebLogic blue VMs (>60%)",
+    "body": "{\"auto_scale_env\":\"fvt1\",\"action\":\"status\"}",
+    "type": "REPEAT",
+    "severity": "CRITICAL",
+    "timestampEpochMillis": 1745880780000,
+    "timestamp": "2025-04-28T22:53:00Z",
+    "alarmMetaData": [
+      {
+        "id": "ocid1.alarm.oc1.phx.aaaaaaaamsm4hetd3pgnvg4vhwq2jmhzdcnnlvr6ywhav7bkdc5mecajrolq",
+        "status": "FIRING",
+        "severity": "CRITICAL",
+        "namespace": "oci_computeagent",
+        "query": "CpuUtilization[1m]{resourceDisplayName =~ \"xocitc2mi02a-blue|xocitc2mi02b-blue|xocitc2mi02c-blue\"}.mean() >= 1",
+        "totalMetricsFiring": 3,
+        "dimensions": [
+          {
+            "instancePoolId": "Default",
+            "resourceDisplayName": "xocitc2mi02a-blue",
+            "faultDomain": "FAULT-DOMAIN-1",
+            "resourceId": "ocid1.instance.oc1.phx.anyhqljsbzarz4yc34afs3j45c6kgeqagzhzutabzxlnhxav4iecqbt3ypaa",
+            "availabilityDomain": "hvtU:PHX-AD-1",
+            "imageId": "ocid1.image.oc1.phx.aaaaaaaa3fxex2ezxiux2xyqn56ufcblhm42wtn4pp2n3w3z2kww4qtl3fcq",
+            "shape": "VM.Standard.E4.Flex",
+            "dedicatedVmHostId": "DefaultVmHostId",
+            "region": "us-phoenix-1"
+          },
+          {
+            "instancePoolId": "Default",
+            "resourceDisplayName": "xocitc2mi02b-blue",
+            "faultDomain": "FAULT-DOMAIN-2",
+            "resourceId": "ocid1.instance.oc1.phx.anyhqljrbzarz4yctyff5ietairashfqxci3o5j7tqdpefia2d44tzpumhpa",
+            "availabilityDomain": "hvtU:PHX-AD-2",
+            "imageId": "ocid1.image.oc1.phx.aaaaaaaa3fxex2ezxiux2xyqn56ufcblhm42wtn4pp2n3w3z2kww4qtl3fcq",
+            "shape": "VM.Standard.E4.Flex",
+            "dedicatedVmHostId": "DefaultVmHostId",
+            "region": "us-phoenix-1"
+          },
+          {
+            "instancePoolId": "Default",
+            "resourceDisplayName": "xocitc2mi02c-blue",
+            "faultDomain": "FAULT-DOMAIN-3",
+            "resourceId": "ocid1.instance.oc1.phx.anyhqljtbzarz4ycithiqzxcgrq733537euy3ppk2bh4eoa437d2wiaydtra",
+            "availabilityDomain": "hvtU:PHX-AD-3",
+            "imageId": "ocid1.image.oc1.phx.aaaaaaaa3fxex2ezxiux2xyqn56ufcblhm42wtn4pp2n3w3z2kww4qtl3fcq",
+            "shape": "VM.Standard.E4.Flex",
+            "dedicatedVmHostId": "DefaultVmHostId",
+            "region": "us-phoenix-1"
+          }
+        ],
+        "alarmUrl": "https://urldefense.proofpoint.com/v2/url?u=https-3A__cloud.oracle.com_monitoring_alarms_ocid1.alarm.oc1.phx.aaaaaaaamsm4hetd3pgnvg4vhwq2jmhzdcnnlvr6ywhav7bkdc5mecajrolq-3Fregion-3Dus-2Dphoenix-2D1&d=DwICaQ&c=V3E2dpHRlUvY_bbhI_FZVQ&r=bEHIG8uwy89fy5K8bswB4W8unKbqCStYEv1YkX0Fxmo&m=AQr46-d8EvnW_skF3sn8dv4VEWVad9z20LVKGArX49BPmTX5OEMtk9lAwvHBroQs&s=rIBI-OHmnAjWq_qXdz01VgAciwxSKFBRUwSVJr-HvAA&e=",
+        "alarmSummary": "Triggers a scale-out operation by invoking an OCI Function when the average CPU utilization of any one of the WebLogic VMs (xocitc2mi02a-blue, xocitc2mi02b-blue, or xocitc2mi02c-blue) exceeds 60% over a 1-minute interval.",
+        "metricValues": [
+          {
+            "CpuUtilization[1m]{resourceDisplayName =~ \"xocitc2mi02a-blue|xocitc2mi02b-blue|xocitc2mi02c-blue\"}.mean()": "82.75"
+          },
+          {
+            "CpuUtilization[1m]{resourceDisplayName =~ \"xocitc2mi02a-blue|xocitc2mi02b-blue|xocitc2mi02c-blue\"}.mean()": "23.75"
+          },
+          {
+            "CpuUtilization[1m]{resourceDisplayName =~ \"xocitc2mi02a-blue|xocitc2mi02b-blue|xocitc2mi02c-blue\"}.mean()": "20.92"
+          }
+        ]
+      }
+    ],
+    "notificationType": "Grouped messages across metric streams",
+    "version": 1.5
+  }
+  
